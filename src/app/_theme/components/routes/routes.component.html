@@ -1,0 +1,151 @@
+<ul nz-menu nzTheme="dark" nzMode="inline">
+  <ng-container
+    *ngFor="let route of routesService.visible$ | async; trackBy: trackByFn"
+    [ngTemplateOutlet]="isDropdown(route) ? dropdownLink : defaultLink"
+    [ngTemplateOutletContext]="{ $implicit: route }"
+  >
+  </ng-container>
+
+  <ng-template #defaultLink let-route>
+    <li nz-menu-item nzMatchRouter *abpPermission="route.requiredPolicy">
+      <a [routerLink]="[route.path]">
+        <!-- <i *ngIf="route.iconClass" [ngClass]="route.iconClass"></i> -->
+        {{ route.name | abpLocalization }}
+      </a>
+    </li>
+
+    <!-- <li class="nav-item" *abpPermission="route.requiredPolicy">
+      <a class="nav-link" [routerLink]="[route.path]"
+        ><i *ngIf="route.iconClass" [ngClass]="route.iconClass"></i>
+        {{ route.name | abpLocalization }}</a
+      >
+    </li> -->
+  </ng-template>
+
+  <ng-template #dropdownLink let-route>
+    <ng-container *ngIf="route.children?.length">
+      <li #navbarRootDropdown nz-submenu  [nzTitle]="route.name | abpLocalization" [nzIcon]="iconClass" *abpPermission="route.requiredPolicy">
+        <ul>
+          <ng-container
+            *ngTemplateOutlet="forTemplate; context: { $implicit: route }"
+          ></ng-container>
+        </ul>
+      </li>
+
+      <!-- <li
+        #navbarRootDropdown
+        class="nav-item dropdown"
+        display="static"
+        *abpPermission="route.requiredPolicy"
+        (click)="
+          navbarRootDropdown.expand
+            ? (navbarRootDropdown.expand = false)
+            : (navbarRootDropdown.expand = true)
+        "
+      >
+        <a
+          class="nav-link dropdown-toggle"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+          href="javascript:void(0)"
+        >
+          <i *ngIf="route.iconClass" [ngClass]="route.iconClass"></i>
+          {{ route.name | abpLocalization }}
+        </a>
+        <div
+          #routeContainer
+          class="dropdown-menu border-0 shadow-sm"
+          (click)="$event.preventDefault(); $event.stopPropagation()"
+          [class.d-block]="smallScreen && navbarRootDropdown.expand"
+        >
+          <ng-container
+            *ngTemplateOutlet="forTemplate; context: { $implicit: route }"
+          ></ng-container>
+        </div>
+      </li> -->
+    </ng-container>
+  </ng-template>
+
+  <ng-template #forTemplate let-route>
+    <ng-container *ngFor="let child of route.children">
+      <ng-template
+        [ngTemplateOutlet]="child.children?.length ? dropdownChild : defaultChild"
+        [ngTemplateOutletContext]="{ $implicit: child }"
+      ></ng-template>
+    </ng-container>
+  </ng-template>
+
+  <ng-template #defaultChild let-child>
+    <ng-container *ngIf="child.path">
+      <li nz-menu-item nzMatchRouter *abpPermission="child.requiredPolicy">
+        <a [routerLink]="[child.path]">{{ child.name | abpLocalization }}</a>
+      </li>
+
+      <!-- <div class="dropdown-submenu" *abpPermission="child.requiredPolicy">
+        <a class="dropdown-item" [routerLink]="[child.path]" (click)="closeDropdown()">
+          <i *ngIf="child.iconClass" [ngClass]="child.iconClass"></i>
+          {{ child.name | abpLocalization }}</a
+        >
+      </div> -->
+    </ng-container>
+  </ng-template>
+
+  <ng-template #dropdownChild let-child>
+    <li nz-submenu  [nzTitle]="child.name | abpLocalization" *abpPermission="child.requiredPolicy">
+      <ul>
+        <ng-container *ngTemplateOutlet="forTemplate; context: { $implicit: child }"></ng-container>
+      </ul>
+    </li>
+    <!-- <div
+      class="dropdown-submenu"
+      ngbDropdown
+      #dropdownSubmenu="ngbDropdown"
+      placement="right-top"
+      [autoClose]="true"
+      *abpPermission="child.requiredPolicy"
+    >
+      <div ngbDropdownToggle [class.dropdown-toggle]="false">
+        <a
+          abpEllipsis="210px"
+          [abpEllipsisEnabled]="!smallScreen"
+          role="button"
+          class="btn d-block text-left dropdown-toggle"
+        >
+          <i *ngIf="child.iconClass" [ngClass]="child.iconClass"></i>
+          {{ child.name | abpLocalization }}
+        </a>
+      </div>
+      <div
+        #childrenContainer
+        class="dropdown-menu border-0 shadow-sm"
+        [class.d-block]="smallScreen && dropdownSubmenu.isOpen()"
+      >
+        <ng-container *ngTemplateOutlet="forTemplate; context: { $implicit: child }"></ng-container>
+      </div>
+    </div> -->
+  </ng-template>
+</ul>
+
+<!-- <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+  <li nz-submenu  nzTitle="Dashboard" nzIcon="dashboard">
+    <ul>
+      <li nz-menu-item nzMatchRouter>
+        <a routerLink="/welcome">Welcome</a>
+      </li>
+      <li nz-menu-item nzMatchRouter>
+        <a>Monitor</a>
+      </li>
+      <li nz-menu-item nzMatchRouter>
+        <a>Workplace</a>
+      </li>
+    </ul>
+  </li>
+  <li nz-submenu  nzTitle="Form" nzIcon="form">
+    <ul>
+      <li nz-menu-item nzMatchRouter>
+        <a>Basic Form</a>
+      </li>
+    </ul>
+  </li>
+</ul> -->
